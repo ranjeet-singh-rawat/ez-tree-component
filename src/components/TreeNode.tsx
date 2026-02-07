@@ -7,6 +7,10 @@ interface TreeNodeProps {
   handleDeleteNode: (nodeId: string) => void;
   handleUpdateNode: (nodeId: string, newLabel: string) => void;
   handleLazyLoad: (nodeId: string) => void;
+  handleDragStart: (node: TreeNodeType) => void;
+  handleDrop: (targetNodeId: string) => void;
+  handleDragEnd: () => void;
+  draggedNodeId: string | null;
 }
 
 const TreeNode = ({
@@ -15,6 +19,10 @@ const TreeNode = ({
   handleDeleteNode,
   handleUpdateNode,
   handleLazyLoad,
+  handleDragStart,
+  handleDrop,
+  handleDragEnd,
+  draggedNodeId,
 }: TreeNodeProps) => {
   const [expand, setExpand] = useState<boolean>(false);
   const [showInput, setShowInput] = useState({
@@ -24,6 +32,7 @@ const TreeNode = ({
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(explorer.label);
   const [isLoading, setIsLoading] = useState(false);
+  const [isDragOver, setIsDragOver] = useState(false);
 
   const handleNewNode = (e: React.MouseEvent<HTMLButtonElement>, isFolder: boolean) => {
     e.stopPropagation();
@@ -80,17 +89,64 @@ const TreeNode = ({
     }
   };
 
+  const onDragStart = (e: React.DragEvent) => {
+    e.stopPropagation();
+    handleDragStart(explorer);
+  };
+
+  const onDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (explorer.isFolder) {
+      setIsDragOver(true);
+    }
+  };
+
+  const onDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+  };
+
+  const onDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+    if (explorer.isFolder) {
+      handleDrop(explorer.id);
+    }
+  };
+
+  const onDragEnd = () => {
+    handleDragEnd();
+  };
+
+  const isDragging = draggedNodeId === explorer.id;
+  const dragOverStyle = isDragOver ? { backgroundColor: "#c8e6c9" } : {};
+  const draggingStyle = isDragging ? { opacity: 0.5 } : {};
+
   if (explorer.isFolder) {
     return (
       <div style={{ marginTop: "5px" }}>
         <div
           className="folder"
+          draggable
+          onDragStart={onDragStart}
+          onDragOver={onDragOver}
+          onDragLeave={onDragLeave}
+          onDrop={onDrop}
+          onDragEnd={onDragEnd}
           style={{
             display: "flex",
             alignItems: "center",
             gap: "8px",
             padding: "4px",
-            cursor: "pointer",
+            cursor: isDragging ? "grabbing" : "pointer",
+            border: isDragOver ? "2px dashed #4CAF50" : "2px solid transparent",
+            borderRadius: "4px",
+            transition: "all 0.2s",
+            ...dragOverStyle,
+            ...draggingStyle,
           }}
         >
           <span onClick={handleExpand} style={{ userSelect: "none" }}>
@@ -165,6 +221,10 @@ const TreeNode = ({
               handleDeleteNode={handleDeleteNode}
               handleUpdateNode={handleUpdateNode}
               handleLazyLoad={handleLazyLoad}
+              handleDragStart={handleDragStart}
+              handleDrop={handleDrop}
+              handleDragEnd={handleDragEnd}
+              draggedNodeId={draggedNodeId}
             />
           ))}
         </div>
@@ -174,12 +234,18 @@ const TreeNode = ({
     return (
       <div
         className="file"
+        draggable
+        onDragStart={onDragStart}
+        onDragEnd={onDragEnd}
         style={{
           display: "flex",
           alignItems: "center",
           gap: "8px",
           padding: "4px",
           marginTop: "5px",
+          cursor: isDragging ? "grabbing" : "pointer",
+          borderRadius: "4px",
+          ...draggingStyle,
         }}
       >
         <span>📄</span>
