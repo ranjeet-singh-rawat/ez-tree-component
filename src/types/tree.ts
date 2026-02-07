@@ -3,7 +3,5 @@ export interface TreeNodeType {
   label: string;
   isFolder: boolean;
   children: TreeNodeType[] | null;
-  isExpanded: boolean;
-  isLoading: boolean;
   parentId: string | null;
 }
