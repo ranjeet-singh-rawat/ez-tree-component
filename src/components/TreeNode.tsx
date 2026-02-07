@@ -6,15 +6,22 @@ interface TreeNodeProps {
 }
 
 const TreeNode = ({ explorer } :TreeNodeProps) => {
-  console.log(explorer);
 
   const[expand,setExpand] = useState<boolean>(false);
+  const handleNewFolder = (e: React.MouseEvent<HTMLButtonElement>) => (
+    e.stopPropagation()
+  )
+
   if(explorer.isFolder){
 
     return (
       <>
-      <div className="folder cursor-pointer" onClick={()=>setExpand(!expand)}>
+      <div className="folder cursor-pointer flex justify-center items-center gap-5" onClick={()=>setExpand(!expand)}>
         <span>{expand?"📂":"📁"} {explorer.label}</span>
+        <div>
+          <button onClick={(e)=>(handleNewFolder(e))}>Folder ➕</button>
+          <button onClick={(e)=>(handleNewFolder(e))}>File ➕</button>
+        </div>
       </div>
 
       <div style={{display:expand?"block":"none"}} className="pl-14">
