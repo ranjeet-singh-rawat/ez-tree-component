@@ -4,4 +4,5 @@ export interface TreeNodeType {
   isFolder: boolean;
   children: TreeNodeType[] | null;
   parentId: string | null;
+  isLoading?: boolean;
 }
