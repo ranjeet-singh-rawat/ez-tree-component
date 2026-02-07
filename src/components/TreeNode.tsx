@@ -184,13 +184,15 @@ const TreeNode = ({
             >
               📄+
             </button>
-            <button
-              onClick={handleDelete}
-              style={{ padding: "2px 6px", fontSize: "12px", color: "red" }}
-              title="Delete"
-            >
-              🗑️
-            </button>
+            {explorer.id !== "1" && (
+              <button
+                onClick={handleDelete}
+                style={{ padding: "2px 6px", fontSize: "12px", color: "red" }}
+                title="Delete"
+              >
+                🗑️
+              </button>
+            )}
           </div>
         </div>
 

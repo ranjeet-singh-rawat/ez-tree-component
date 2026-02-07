@@ -273,13 +273,6 @@ const TreeView = () => {
     setDraggedNode(null);
   };
 
-  const resetData = () => {
-    if (window.confirm("Reset to default data? This will clear all changes.")) {
-      localStorage.removeItem(STORAGE_KEY);
-      setExplorerData(explorer);
-    }
-  };
-
   const handleLazyLoad = async (nodeId: string) => {
     const children = await loadChildren(nodeId);
     const updateTreeWithChildren = (tree: TreeNodeType): TreeNodeType => {
@@ -308,22 +301,7 @@ const TreeView = () => {
 
   return (
     <div style={{ padding: "20px" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
-        <h2 style={{ margin: 0 }}>Tree View Component</h2>
-        <button
-          onClick={resetData}
-          style={{
-            padding: "6px 12px",
-            backgroundColor: "#ff5722",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-          }}
-        >
-          🔄 Reset Data
-        </button>
-      </div>
+      <h2 style={{ margin: 0, marginBottom: "10px" }}>Tree View Component</h2>
       <TreeNode
         explorer={explorerData}
         handleInsertNode={handleInsert}
